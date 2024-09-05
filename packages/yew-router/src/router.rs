@@ -1,10 +1,11 @@
 //! Router Component.
+use std::borrow::Cow;
 use std::rc::Rc;
 
 use yew::prelude::*;
 use yew::virtual_dom::AttrValue;
 
-use crate::history::{AnyHistory, BrowserHistory, HashHistory, History, Location};
+use crate::history::{AnyHistory, BrowserHistory, HashHistory, History, Location, query::Raw};
 use crate::navigator::Navigator;
 use crate::utils::{base_url, strip_slash_suffix};
 
@@ -78,8 +79,20 @@ fn base_router(props: &RouterProps) -> Html {
     });
 
     let basename = basename.map(|m| strip_slash_suffix(&m).to_string());
+    let old_basename = use_state_eq(|| basename.clone());
+
+    let navigator = Navigator::new(history.clone(), basename.clone());
+
+    if basename != *old_basename {
+        let old_navigator = Navigator::new(history.clone(), basename.clone());
+        let location = history.location();
+        let stripped = old_navigator.strip_basename(Cow::Borrowed(location.path()));
+        let prepended = navigator.prefix_basename(&stripped);
+        let _ = history.replace_with_query(prepended, Raw(location.query_str()));
+    }
+
     let navi_ctx = NavigatorContext {
-        navigator: Navigator::new(history.clone(), basename),
+        navigator,
     };
 
     {
