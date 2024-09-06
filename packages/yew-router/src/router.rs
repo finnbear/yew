@@ -6,7 +6,8 @@ use std::rc::Rc;
 use yew::prelude::*;
 use yew::virtual_dom::AttrValue;
 
-use crate::history::{query::Raw, AnyHistory, BrowserHistory, HashHistory, History, Location};
+use crate::history::query::Raw;
+use crate::history::{AnyHistory, BrowserHistory, HashHistory, History, Location};
 use crate::navigator::Navigator;
 use crate::utils::{base_url, strip_slash_suffix};
 
