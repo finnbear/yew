@@ -84,12 +84,12 @@ fn base_router(props: &RouterProps) -> Html {
     let navigator = Navigator::new(history.clone(), basename.clone());
 
     if basename != *old_basename {
-        let old_navigator = Navigator::new(history.clone(), basename.clone());
+        let old_navigator = Navigator::new(history.clone(), old_basename.deref().clone());
+        old_basename.set(basename.clone());
         let location = history.location();
         let stripped = old_navigator.strip_basename(Cow::Borrowed(location.path()));
         let prepended = navigator.prefix_basename(&stripped);
         let _ = history.replace_with_query(prepended, Raw(location.query_str()));
-        old_basename.set(basename.clone());
     }
 
     let navi_ctx = NavigatorContext {
