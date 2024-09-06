@@ -1,6 +1,7 @@
 //! Router Component.
 use std::borrow::Cow;
 use std::rc::Rc;
+use std::ops::Deref;
 
 use yew::prelude::*;
 use yew::virtual_dom::AttrValue;
