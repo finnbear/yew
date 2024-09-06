@@ -1,12 +1,12 @@
 //! Router Component.
 use std::borrow::Cow;
-use std::rc::Rc;
 use std::ops::Deref;
+use std::rc::Rc;
 
 use yew::prelude::*;
 use yew::virtual_dom::AttrValue;
 
-use crate::history::{AnyHistory, BrowserHistory, HashHistory, History, Location, query::Raw};
+use crate::history::{query::Raw, AnyHistory, BrowserHistory, HashHistory, History, Location};
 use crate::navigator::Navigator;
 use crate::utils::{base_url, strip_slash_suffix};
 
@@ -93,9 +93,7 @@ fn base_router(props: &RouterProps) -> Html {
         let _ = history.replace_with_query(prepended, Raw(location.query_str()));
     }
 
-    let navi_ctx = NavigatorContext {
-        navigator,
-    };
+    let navi_ctx = NavigatorContext { navigator };
 
     {
         let loc_ctx_dispatcher = loc_ctx.dispatcher();
