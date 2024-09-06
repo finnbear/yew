@@ -89,6 +89,7 @@ fn base_router(props: &RouterProps) -> Html {
         let stripped = old_navigator.strip_basename(Cow::Borrowed(location.path()));
         let prepended = navigator.prefix_basename(&stripped);
         let _ = history.replace_with_query(prepended, Raw(location.query_str()));
+        old_basename.set(basename.clone());
     }
 
     let navi_ctx = NavigatorContext {
