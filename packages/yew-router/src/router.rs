@@ -1,6 +1,5 @@
 //! Router Component.
 use std::borrow::Cow;
-use std::ops::Deref;
 use std::rc::Rc;
 
 use yew::prelude::*;
@@ -81,17 +80,25 @@ fn base_router(props: &RouterProps) -> Html {
     });
 
     let basename = basename.map(|m| strip_slash_suffix(&m).to_string());
-    let old_basename = use_state_eq(|| basename.clone());
+    let old_basename = use_state_eq(|| Option::<String>::None);
 
     let navigator = Navigator::new(history.clone(), basename.clone());
 
     if basename != *old_basename {
-        let old_navigator = Navigator::new(history.clone(), old_basename.deref().clone());
+        // If `old_basename` is `Some`, path is probably prefixed with `old_basename`.
+        // If `old_basename` is `None`, path may or may not be prefixed with the new `basename`,
+        // depending on whether this is the first render.
+        let old_navigator = Navigator::new(
+            history.clone(),
+            old_basename.as_ref().or(basename.as_ref()).cloned(),
+        );
         old_basename.set(basename.clone());
         let location = history.location();
         let stripped = old_navigator.strip_basename(Cow::Borrowed(location.path()));
         let prefixed = navigator.prefix_basename(&stripped);
-        let _ = history.replace_with_query(prefixed, Raw(location.query_str()));
+        if prefixed != location.path() {
+            let _ = history.replace_with_query(prefixed, Raw(location.query_str()));
+        }
     }
 
     let navi_ctx = NavigatorContext { navigator };
